@@ -1,20 +1,18 @@
-// netlify/functions/api.js
-
 const express = require("express")
 const morgan = require("morgan")
 const cors = require("cors")
-const serverless = require("serverless-http") // Add this line
-
+const serverless = require("serverless-http")
 const app = express()
 const PORT = process.env.PORT || 3001
 
-app.use(express.static('dist'))
+app.use(express.static("dist"))
 app.use(cors())
 app.use(express.json())
-
 // Customization to show the body on the console
-morgan.token('body', (req) => JSON.stringify(req.body))
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+morgan.token("body", (req) => JSON.stringify(req.body))
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :body")
+)
 
 // Function to define the id
 const generateId = () => {
@@ -46,7 +44,7 @@ let persons = [
   },
 ]
 
-// Home
+// Home view
 app.get("/", (request, response) => {
   response.send("<h1>Home page for the phonebook</h1>")
 })
@@ -100,5 +98,23 @@ app.post("/api/persons", (request, response) => {
   response.json(person)
 })
 
-// Replace the app.listen with module.exports
-module.exports.handler = serverless(app)
+// Delete a person
+app.delete("/api/persons/:id", (request, response) => {
+  const id = request.params.id
+  persons = persons.filter((p) => p.id !== id)
+  response.status(204).end()
+})
+
+// Production (Netlify)
+// module.exports.handler = serverless(app)
+
+// Develoment
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" })
+}
+
+app.use(unknownEndpoint)
