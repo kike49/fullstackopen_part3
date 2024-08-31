@@ -1,13 +1,17 @@
+[build]
+  # Set the publish directory to the dist folder where your static files are
+  publish = "dist"
+  command = "echo Building Functions" # or use a real build command if you have one
+
 [functions]
-  external_node_modules = ["express"]
+  # Ensure the functions directory is correctly set to where your Netlify functions are
+  directory = "netlify/functions" 
+  external_node_modules = ["express", "morgan", "cors", "serverless-http"]
   node_bundler = "esbuild"
 
 [[redirects]]
+  # Redirect all API requests to the serverless function
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
   status = 200
   force = true
-
-[build]
-  command = "echo Building Functions"
-  publish = "build"
