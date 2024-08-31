@@ -1,10 +1,10 @@
 {
   "name": "fullstackopen_exercises_part03",
   "version": "1.0.0",
-  "main": "netlify/functions/index.js", // Update this if needed
+  "main": "netlify/functions/index.js",
   "scripts": {
-    "start": "node netlify/functions/index.js", // For local testing, if necessary
-    "dev": "nodemon netlify/functions/index.js", // For local development
+    "start": "node netlify/functions/index.js",
+    "dev": "nodemon netlify/functions/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
