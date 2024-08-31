@@ -4,21 +4,16 @@ const cors = require("cors")
 const serverless = require("serverless-http")
 const app = express()
 const PORT = process.env.PORT || 3001
+const unknownEndpoint = (request, response) => response.status(404).send({ error: "unknown endpoint" })
 
 app.use(express.static("dist"))
 app.use(cors())
 app.use(express.json())
-// Customization to show the body on the console
-morgan.token("body", (req) => JSON.stringify(req.body))
-app.use(
-  morgan(":method :url :status :res[content-length] - :response-time ms :body")
-)
+morgan.token("body", (req) => JSON.stringify(req.body)) // Customization to show the body on the console
+app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"))
 
 // Function to define the id
-const generateId = () => {
-  id = Math.floor(Math.random() * 999)
-  return String(id)
-}
+const generateId = () => String(Math.floor(Math.random() * 999))
 
 // Hard-coded data for the app initialization
 let persons = [
@@ -98,7 +93,7 @@ app.post("/api/persons", (request, response) => {
   response.json(person)
 })
 
-// Delete a person
+// Delete person
 app.delete("/api/persons/:id", (request, response) => {
   const id = request.params.id
   persons = persons.filter((p) => p.id !== id)
@@ -109,12 +104,7 @@ app.delete("/api/persons/:id", (request, response) => {
 module.exports.handler = serverless(app)
 
 // Develoment
-// app.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`)
-// })
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: "unknown endpoint" })
-}
-
+// At the end to alert of failed endpoints
 app.use(unknownEndpoint)
