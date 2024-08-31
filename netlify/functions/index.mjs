@@ -1,8 +1,12 @@
+// netlify/functions/api.js
+
 const express = require("express")
 const morgan = require("morgan")
+const cors = require("cors")
+const serverless = require("serverless-http") // Add this line
+
 const app = express()
-const PORT = 3001
-const cors = require('cors')
+const PORT = process.env.PORT || 3001
 
 app.use(express.static('dist'))
 app.use(cors())
@@ -11,11 +15,6 @@ app.use(express.json())
 // Customization to show the body on the console
 morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
-
-// Message to confirm the port access success
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
 
 // Function to define the id
 const generateId = () => {
@@ -100,3 +99,6 @@ app.post("/api/persons", (request, response) => {
   persons = persons.concat(person)
   response.json(person)
 })
+
+// Replace the app.listen with module.exports
+module.exports.handler = serverless(app)
