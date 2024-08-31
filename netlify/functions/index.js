@@ -106,12 +106,12 @@ app.delete("/api/persons/:id", (request, response) => {
 })
 
 // Production (Netlify)
-// module.exports.handler = serverless(app)
+module.exports.handler = serverless(app)
 
 // Develoment
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`)
+// })
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: "unknown endpoint" })
