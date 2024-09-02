@@ -1,13 +1,13 @@
-require("dotenv").config()
+require('dotenv').config()
 
-const express = require("express")
-const morgan = require("morgan")
-const cors = require("cors")
-const serverless = require("serverless-http")
+const express = require('express')
+const morgan = require('morgan')
+const cors = require('cors')
+const serverless = require('serverless-http')
 const app = express()
-const Person = require("../../models/person")
+const Person = require('../../models/person')
 const PORT = process.env.PORT
-const unknownEndpoint = (request, response) => response.status(404).send({ error: "Unknown endpoint" })
+const unknownEndpoint = (request, response) => response.status(404).send({ error: 'Unknown endpoint' })
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
   if (error.name === 'CastError') {
@@ -19,28 +19,28 @@ const errorHandler = (error, request, response, next) => {
 }
 
 // Middlewares
-app.use(express.static("dist"))
+app.use(express.static('dist'))
 app.use(cors())
 app.use(express.json())
-morgan.token("body", (req) => JSON.stringify(req.body)) // Customization to show the body on the console
-app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"))
+morgan.token('body', (req) => JSON.stringify(req.body)) // Customization to show the body on the console
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 // ROUTES
 // Info
-app.get("/info", (request, response) => {
+app.get('/info', (request, response, next) => {
   Person.countDocuments({})
-  .then(count => {
-    const currentTime = new Date()
-    response.send(`
+    .then(count => {
+      const currentTime = new Date()
+      response.send(`
       <p>The phonebook stores data for ${count} people</p>
       <p>${currentTime}</p>
     `)
-  })
-  .catch(error => next(error))
+    })
+    .catch(error => next(error))
 })
 
 // All persons
-app.get("/api/persons", (request, response) => {
+app.get('/api/persons', (request, response, next) => {
   Person.find({})
     .then((people) => {
       response.json(people)
@@ -49,7 +49,7 @@ app.get("/api/persons", (request, response) => {
 })
 
 // One person
-app.get("/api/persons/:id", (request, response, next) => {
+app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id)
     .then(person => {
       if (person) {
@@ -62,7 +62,7 @@ app.get("/api/persons/:id", (request, response, next) => {
 })
 
 // Add person
-app.post("/api/persons", (request, response, next) => {
+app.post('/api/persons', (request, response, next) => {
   const { name, number } = request.body
 
   // Create new entry on DB with data
@@ -77,14 +77,14 @@ app.post("/api/persons", (request, response, next) => {
 })
 
 // Delete person
-app.delete("/api/persons/:id", (request, response, next) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => response.status(204).end())
+    .then(() => response.status(204).end())
     .catch(error => next(error))
 })
 
 // Update the phone number
-app.put("/api/persons/:id", (request, response, next) => {
+app.put('/api/persons/:id', (request, response, next) => {
   const { name, number } = request.body
   Person.findByIdAndUpdate(request.params.id, { name, number }, { new: true, runValidators: true, context: 'query' })
     .then(updatedPerson => {
@@ -93,11 +93,13 @@ app.put("/api/persons/:id", (request, response, next) => {
     .catch(error => next(error))
 })
 
-// Production (Netlify)
-module.exports.handler = serverless(app)
-
-// Development
-//app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+if (process.env.NODE_ENV === 'production') {
+  // Production (Netlify)
+  module.exports.handler = serverless(app)
+} else {
+  // Development
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+}
 
 // At the end to alert of failed endpoints and error registered
 app.use(unknownEndpoint)

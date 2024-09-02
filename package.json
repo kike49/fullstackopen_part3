@@ -6,7 +6,8 @@
     "start": "node netlify/functions/index.js",
     "dev": "nodemon netlify/functions/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rd /s /q dist && cd ..\\fullstackopen_exercises\\part2\\phonebook && npm run build && xcopy dist ..\\..\\..\\fullstackopen_exercises_part03\\dist /E /I /Y"
+    "build": "rd /s /q dist && cd ..\\fullstackopen_exercises\\part2\\phonebook && npm run build && xcopy dist ..\\..\\..\\fullstackopen_exercises_part03\\dist /E /I /Y",
+    "lint": "npx eslint --fix netlify/functions/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -23,6 +24,10 @@
     "serverless-http": "^3.2.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@stylistic/eslint-plugin-js": "^2.7.2",
+    "eslint": "^9.9.1",
+    "globals": "^15.9.0",
     "nodemon": "^3.1.4"
   }
 }
