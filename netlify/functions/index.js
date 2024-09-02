@@ -97,7 +97,7 @@ app.put("/api/persons/:id", (request, response, next) => {
 module.exports.handler = serverless(app)
 
 // Development
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+//app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
 // At the end to alert of failed endpoints and error registered
 app.use(unknownEndpoint)
