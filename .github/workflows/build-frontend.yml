@@ -1,0 +1,62 @@
+name: Build frontend and Lint code
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.17'
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Remove existing dist folder in root
+        run: rm -rf ./dist
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Move build to root directory
+        run: mv ./frontend/dist ./dist
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.17'
+      
+      - name: Install root dependencies
+        run: npm install
+
+      - name: Lint root directory
+        run: npm run lint
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Lint frontend directory
+        working-directory: ./frontend
+        run: npm run lint
