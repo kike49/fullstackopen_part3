@@ -92,7 +92,7 @@ const App = () => {
           setPersons(persons.filter((person) => person.id !== id)) // updates the list of new persons
         })
         .catch(error => {
-          setMessage(`'${personToDelete.name}' was already deleted from the server`)
+          setMessage(`Error '${error}': '${personToDelete.name}' was already deleted from the server`)
           setClassMessage('error')
           setTimeout(() => {
             setMessage(null)
